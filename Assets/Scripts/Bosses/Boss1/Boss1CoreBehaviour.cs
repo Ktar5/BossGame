@@ -21,7 +21,7 @@ public class Boss1CoreBehaviour : MonoBehaviour {
 
 	//SPIRAL
 	float spiral_sin = -1f;
-	float spiral_speed = .02f;
+	float spiral_speed = .04f;
 	[Range(0,1)]
 	public float spiral_time = 0;
 	[Range(1,2)]
@@ -48,7 +48,7 @@ public class Boss1CoreBehaviour : MonoBehaviour {
 
 	public bool Spiral(float distance) {
 
-		float speed = Mathf.Lerp (spiral_speed, spiral_speed * 3, spiral_time);
+		float speed = Mathf.Lerp (spiral_speed * 3, spiral_speed * 1, spiral_time);
 		float magnitude = Mathf.Lerp (1, 6, spiral_time);
 
 		for (int i = 0; i < hands.Length; i++) {
@@ -59,16 +59,18 @@ public class Boss1CoreBehaviour : MonoBehaviour {
 
 			float offset = i * ((2 * Mathf.PI) / hands.Length);
 
-			t.position = new Vector3 (
-				transform.position.x + Mathf.Sin (spiral_sin + offset) * distance * magnitude,
-				transform.position.y + Mathf.Cos (spiral_sin + offset) * distance * magnitude,
-				0);
+			t.position = Vector3.Lerp(t.position, 
+				new Vector3 (
+					transform.position.x + Mathf.Sin (spiral_sin + offset) * distance * magnitude,
+					transform.position.y + Mathf.Cos (spiral_sin + offset) * distance * magnitude,
+					0),
+				.2f);
 
-			spiral_sin += speed;
+			spiral_sin += speed/hands.Length;
 
 		}
 
-		spiral_time += 0.005f;
+		spiral_time += 0.002f;
 
 		if (spiral_time > 1) {
 			spiral_time = 0f;
