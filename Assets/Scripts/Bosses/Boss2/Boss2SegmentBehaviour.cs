@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class Boss2SegmentBehaviour : MonoBehaviour {
 
+
 	public GameObject segment;
 	public Transform butt;
 	public Transform tail;
@@ -34,7 +35,7 @@ public class Boss2SegmentBehaviour : MonoBehaviour {
 	public void UpdatePositions() {
 
 		sin += .045f;
-		if (sin == Mathf.PI * 2f) {
+		if (sin >= Mathf.PI * 2f) {
 			sin = 0f;
 		}
 
