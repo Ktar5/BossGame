@@ -1,6 +1,6 @@
 fileFormatVersion: 2
 guid: 1f2dfc4e6b5c396409c6e2eea59420f1
-timeCreated: 1497385309
+timeCreated: 1497428001
 licenseType: Free
 TextureImporter:
   fileIDToRecycleName:
@@ -63,7 +63,7 @@ TextureImporter:
     maxTextureSize: 2048
     textureFormat: -1
     textureCompression: 2
-    compressionQuality: 50
+    compressionQuality: 100
     crunchedCompression: 0
     allowsAlphaSplitting: 0
     overridden: 0
@@ -161,6 +161,19 @@ TextureImporter:
         height: 28
       alignment: 0
       pivot: {x: 0.5, y: 0.5}
+      border: {x: 0, y: 0, z: 0, w: 0}
+      outline: []
+      tessellationDetail: 0
+    - serializedVersion: 2
+      name: bossdesign1_2
+      rect:
+        serializedVersion: 2
+        x: 64
+        y: 4
+        width: 32
+        height: 24
+      alignment: 1
+      pivot: {x: 0, y: 1}
       border: {x: 0, y: 0, z: 0, w: 0}
       outline: []
       tessellationDetail: 0
