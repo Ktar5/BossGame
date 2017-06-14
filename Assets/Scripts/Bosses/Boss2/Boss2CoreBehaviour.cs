@@ -11,6 +11,7 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 
 	public Boss2FireballBehaviour fireball;
 	public float fireballMissileSpeed;
+	public ParticleSystem charging;
 
 	Rigidbody2D mRigidbody2D;
 
@@ -25,6 +26,7 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 		mRigidbody2D = GetComponent<Rigidbody2D> ();
 		leg1start = leg1.localPosition;
 		leg2start = leg2.localPosition;
+		charging.Stop ();
 	}
 
 	void Update() {
@@ -39,8 +41,11 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 
 	IEnumerator Shoot() {
 		moving = false;
+		charging.Play ();
 
 		yield return new WaitForSeconds (1.5f);
+
+		charging.Stop ();
 
 		for (int i = 0; i < 5; i++) {
 			Boss2FireballBehaviour fb = Instantiate (fireball, mouth.position, Quaternion.identity) as Boss2FireballBehaviour;
@@ -48,6 +53,7 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 			fb.SetSpeed (fireballMissileSpeed);
 			yield return new WaitForSeconds (.1f);
 		}
+
 
 		moving = true;
 
