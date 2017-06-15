@@ -21,14 +21,17 @@ public class TopDown2DPlayer : MonoBehaviour {
 	}
 
 
-
 	[System.Serializable]
 	public class Movement {
 
 		public float speed = 7f; /*speed of the player*/
-		public float smoothSpeed = 12f; /*smoothing velocity of the player. Higher values mean less smoothing.*/
+		public float smoothSpeed = .6f; /*smoothing velocity of the player. Higher values mean less smoothing.*/
 		public Direction facing; /*faced direction.*/
-
+		//Hidden
+		[HideInInspector]
+		public bool isMoving;
+		[HideInInspector]
+		public Animator anim;
 		[HideInInspector]
 		public Vector2 movementDirection; /*direction of the player. Normalized to input.*/
 		[HideInInspector]
@@ -45,14 +48,16 @@ public class TopDown2DPlayer : MonoBehaviour {
 	Run first frame.
 	*/
 	void Start() {
-		InitRigidBody ();
+		InitComponents ();
 	}
 
 	/*
 	INIT RIGIDBODY
 	Initialize some values for the Rigidbody object.
 	*/
-	void InitRigidBody() {
+	void InitComponents() {
+
+		movement.anim = GetComponent<Animator> ();
 		movement.body = GetComponent<Rigidbody2D> ();
 		movement.body.isKinematic = false;
 		movement.body.gravityScale = 0.0f;
@@ -80,6 +85,32 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	}
 
+	public Vector2 DirectionToVector2(Direction d) {
+
+		switch (d) {
+		case Direction.DOWN:
+			return Vector2.down;
+		case Direction.LEFT:
+			return Vector2.left;
+		case Direction.RIGHT:
+			return Vector2.right;
+		case Direction.UP:
+			return Vector2.up;
+			default:
+			return Vector2.zero;
+		}
+
+	}
+
+	public void Animate() {
+
+		movement.anim.SetBool ("isMoving", movement.isMoving);
+
+		Debug.Log (Vector2.Dot (Vector2.right, DirectionToVector2 (movement.facing)));
+
+		movement.anim.SetFloat ("direction", Vector2.Angle (Vector2.right, DirectionToVector2 (movement.facing)));
+	}
+
 	/*
 	MOVE
 	Main movement function. Moves the player according to input.
@@ -97,10 +128,13 @@ public class TopDown2DPlayer : MonoBehaviour {
 		movement.displacement = 
 			Vector3.Lerp(
 				movement.displacement, 
-				movement.movementDirection * movement.speed * Time.fixedDeltaTime, 
-				Time.fixedDeltaTime * movement.smoothSpeed); /*Set displacement accordingly. LERP for smoothing.*/
+				movement.movementDirection * movement.speed, 
+				movement.smoothSpeed); /*Set displacement accordingly. LERP for smoothing.*/
 
-		movement.body.MovePosition(transform.position + movement.displacement); /*Apply the displacement to the rigidbody.*/
+		movement.body.velocity = movement.displacement; /*Apply the displacement to the rigidbody.*/
+
+		movement.isMoving = (movement.body.velocity.sqrMagnitude > 0.2);
+
 	}
 
 	/*
@@ -108,7 +142,8 @@ public class TopDown2DPlayer : MonoBehaviour {
 	Normalized physics update function.
 	*/
 	public void FixedUpdate() {
-		Move();
+		Move ();
+		Animate ();
 	}
 
 }
