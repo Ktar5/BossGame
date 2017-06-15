@@ -112,8 +112,6 @@ public class TopDown2DPlayer : MonoBehaviour {
 			a += 1.0f;
 		}
 
-		Debug.Log (a);
-
 		movement.anim.SetFloat ("direction", a);
 	}
 
