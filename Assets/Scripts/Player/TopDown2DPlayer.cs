@@ -106,9 +106,15 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 		movement.anim.SetBool ("isMoving", movement.isMoving);
 
-		Debug.Log (Vector2.Dot (Vector2.right, DirectionToVector2 (movement.facing)));
+		Vector2 v = DirectionToVector2 (movement.facing);
+		float a = .25f+((Mathf.Atan2 (-v.x, v.y))/(Mathf.PI*2));
+		if (a < 0) {
+			a += 1.0f;
+		}
 
-		movement.anim.SetFloat ("direction", Vector2.Angle (Vector2.right, DirectionToVector2 (movement.facing)));
+		Debug.Log (a);
+
+		movement.anim.SetFloat ("direction", a);
 	}
 
 	/*
