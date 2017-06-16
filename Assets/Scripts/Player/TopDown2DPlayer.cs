@@ -231,14 +231,13 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	public void IO() {
 		combat.slash = (Input.GetButtonDown("Fire1")? true : combat.slash);
-        
-		combat.mousePos = (Input.mousePosition) - combat.cam.WorldToScreenPoint (transform.position);
-		combat.mousePos.Normalize ();
-		combat.mousePos = (Mathf.Abs (combat.mousePos.x) > Mathf.Abs (combat.mousePos.y)) ?
-			new Vector2 (Mathf.Round(combat.mousePos.x), 0) :
-			new Vector2 (0, Mathf.Round(combat.mousePos.y));
-		Debug.Log (combat.mousePos);
-
+		if (!movement.immobilized) {
+			combat.mousePos = (Input.mousePosition) - combat.cam.WorldToScreenPoint (transform.position);
+			combat.mousePos.Normalize ();
+			combat.mousePos = (Mathf.Abs (combat.mousePos.x) > Mathf.Abs (combat.mousePos.y)) ?
+			new Vector2 (Mathf.Round (combat.mousePos.x), 0) :
+			new Vector2 (0, Mathf.Round (combat.mousePos.y));
+		}
 	}
 
 	public void Update() {
