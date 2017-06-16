@@ -1,11 +1,20 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public abstract class Boss : Meatbag {
+public abstract class Boss : MonoBehaviour {
 
-    public Boss(int health, int maxHealth) : base(health, maxHealth) {
+    private Dictionary<int, Meatbag> meatbags;
+    private Behavior behavior;
 
+    public Boss(int health, int maxHealth) {
+        
+    }
+
+    public void ApplyStage(Stage stage) {
+        this.meatbags = stage.meatbags;
+        this.behavior = stage.behavior;
     }
 
     void Start () {
