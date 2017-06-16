@@ -237,7 +237,14 @@ public class TopDown2DPlayer : MonoBehaviour {
 		combat.mousePos = (Mathf.Abs (combat.mousePos.x) > Mathf.Abs (combat.mousePos.y)) ?
 			new Vector2 (Mathf.Round(combat.mousePos.x), 0) :
 			new Vector2 (0, Mathf.Round(combat.mousePos.y));
+<<<<<<< HEAD
     }
+=======
+
+		Debug.Log (combat.mousePos);
+
+	}
+>>>>>>> origin/master
 
 	public void Update() {
 		IO ();
