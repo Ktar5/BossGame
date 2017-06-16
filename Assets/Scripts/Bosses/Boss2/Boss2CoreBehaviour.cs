@@ -6,6 +6,9 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 
 	public Transform mouth;
 	public Transform target;
+
+	public Transform body;
+	private Transform head;
 	public Transform leg1;
 	public Transform leg2;
 
@@ -14,6 +17,9 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 	public ParticleSystem charging;
 
 	Rigidbody2D mRigidbody2D;
+	Enemy enemy;
+
+	SpriteRenderer[] renderers;
 
 	Vector3 leg1start;
 	Vector3 leg2start;
@@ -22,11 +28,23 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 	public float moveSpeed = .7f;
 	float sin = 0;
 
+
+
 	void Start() {
+
+		enemy = GetComponentInChildren<Enemy> ();
 		mRigidbody2D = GetComponent<Rigidbody2D> ();
 		leg1start = leg1.localPosition;
 		leg2start = leg2.localPosition;
 		charging.Stop ();
+		renderers = new SpriteRenderer[5];
+
+		head = body.GetChild (0);
+		renderers [0] = head.gameObject.GetComponent<SpriteRenderer> ();
+		renderers [1] = body.gameObject.GetComponent<SpriteRenderer> ();
+		renderers [2] = leg1.gameObject.GetComponent<SpriteRenderer> ();
+		renderers [3] = leg2.gameObject.GetComponent<SpriteRenderer> ();
+		renderers [4] = enemy.gameObject.GetComponent<SpriteRenderer> ();
 	}
 
 	void Update() {
@@ -36,7 +54,8 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 	}
 
 	void FixedUpdate() {
-		Move();
+		Recoiling ();
+		Move ();
 	}
 
 	IEnumerator Shoot() {
@@ -59,9 +78,27 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 
 	}
 
+	void SetColor(Color c) {
+		foreach(SpriteRenderer r in renderers) {
+
+			r.color = Color.Lerp(r.color, c, .5f);
+
+		}
+	}
+
+	void Recoiling() {
+		if (enemy.isRecoiling ()) {
+			Time.timeScale = .5f;
+			moving = false;
+			SetColor (Color.red);
+		} else {
+			Time.timeScale = 1.0f;
+			moving = true;
+			SetColor (Color.white);
+		}
+	}
+
 	void Move() {
-
-
 
 		Vector2 targetVelocity = (target.position - transform.position).normalized * moveSpeed;
 

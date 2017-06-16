@@ -127,15 +127,8 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	public void Animate() {
 
-		combat.slashing = movement.anim.GetCurrentAnimatorStateInfo (0).IsName ("Slash");
-
-		if (!combat.slashing) {
-			movement.immobilized = false;
-		}
-
 		if (combat.slash) {
 			movement.anim.SetTrigger ("attack");
-			movement.immobilized = true;
 			combat.slash = false;
 		}
 
@@ -160,6 +153,8 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 		combat.swordCol.offset = DirectionToVector2 (movement.facing) * .5f;
 
+		Debug.Log (movement.immobilized);
+
 		if (!movement.immobilized) {
 
 			movement.movementDirection = new Vector2 (
@@ -182,7 +177,6 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 				movement.body.velocity = movement.displacement; /*Apply the displacement to the rigidbody.*/
 		} else {
-
 			movement.body.velocity = Vector2.Lerp (movement.body.velocity, Vector2.zero, .1f);
 
 		}
@@ -211,12 +205,24 @@ public class TopDown2DPlayer : MonoBehaviour {
 		}
 	}
 
-	public void GetInput() {
-		combat.slash = (Input.GetKeyDown(KeyCode.Z)? true : combat.slash);
+	/*These are for animations*/
+	public void StartSlash() {
+		combat.slashing = true;
+		movement.immobilized = true;
+	}
+
+	public void EndSlash() {
+		combat.slashing = false;
+		movement.immobilized = false;
+	}
+
+	public void IO() {
+		combat.slash = (Input.GetButtonDown("Action1")? true : combat.slash);
+
 	}
 
 	public void Update() {
-		GetInput ();
+		IO ();
 	}
 
 	/*
