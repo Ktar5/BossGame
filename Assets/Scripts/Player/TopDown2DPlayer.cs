@@ -7,7 +7,8 @@ using UnityEngine;
 */
 
 [RequireComponent(typeof(Rigidbody2D))]
-[RequireComponent(typeof(Collider2D))]
+[RequireComponent(typeof(CircleCollider2D))]
+[RequireComponent(typeof(BoxCollider2D))]
 public class TopDown2DPlayer : MonoBehaviour {
 
 
@@ -24,10 +25,14 @@ public class TopDown2DPlayer : MonoBehaviour {
 	[System.Serializable]
 	public class Movement {
 
+
+
 		public float speed = 7f; /*speed of the player*/
 		public float smoothSpeed = .6f; /*smoothing velocity of the player. Higher values mean less smoothing.*/
 		public Direction facing; /*faced direction.*/
 		//Hidden
+		[HideInInspector]
+		public BoxCollider2D col;
 		[HideInInspector]
 		public bool isMoving;
 		[HideInInspector]
@@ -38,10 +43,26 @@ public class TopDown2DPlayer : MonoBehaviour {
 		public Vector3 displacement; /*final displacement vector of player. Used in transform calculation.*/
 		[HideInInspector]
 		public Rigidbody2D body; /*attached rigidbody component*/
-		
+		[HideInInspector]
+		public bool immobilized;
+	}
+
+	[System.Serializable]
+	public class Combat {
+
+		public int slashDamage;
+
+		[HideInInspector]
+		public bool slash;
+		[HideInInspector]
+		public bool slashing;
+		[HideInInspector]
+		public CircleCollider2D swordCol;
+
 	}
 
 	public Movement movement; /*Movement object.*/
+	public Combat combat;
 
 	/*
 	START
@@ -56,7 +77,9 @@ public class TopDown2DPlayer : MonoBehaviour {
 	Initialize some values for the Rigidbody object.
 	*/
 	void InitComponents() {
-
+		combat.swordCol = GetComponent<CircleCollider2D> ();
+		combat.swordCol.isTrigger = true;
+		movement.col = GetComponent<BoxCollider2D> ();
 		movement.anim = GetComponent<Animator> ();
 		movement.body = GetComponent<Rigidbody2D> ();
 		movement.body.isKinematic = false;
@@ -104,6 +127,20 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	public void Animate() {
 
+		combat.slashing = movement.anim.GetCurrentAnimatorStateInfo (0).IsName ("Slash");
+
+		if (!combat.slashing) {
+			movement.immobilized = false;
+		}
+
+		if (combat.slash) {
+			movement.anim.SetTrigger ("attack");
+			movement.immobilized = true;
+			combat.slash = false;
+		}
+
+
+
 		movement.anim.SetBool ("isMoving", movement.isMoving);
 
 		Vector2 v = DirectionToVector2 (movement.facing);
@@ -120,25 +157,66 @@ public class TopDown2DPlayer : MonoBehaviour {
 	Main movement function. Moves the player according to input.
 	*/
 	public void Move() {
-		movement.movementDirection = new Vector2 (
-			(Input.GetAxisRaw ("Horizontal")),
-			(Input.GetAxisRaw ("Vertical"))).normalized; /*Set direction to the normalized input vector.*/
 
-		Direction dir = Vector2ToDirection (new Vector2(Mathf.Round(movement.movementDirection.x), Mathf.Round(movement.movementDirection.y)));
-		if (dir != Direction.NONE) {
-			movement.facing = dir;
+		combat.swordCol.offset = DirectionToVector2 (movement.facing) * .5f;
+
+		if (!movement.immobilized) {
+
+			movement.movementDirection = new Vector2 (
+				(Input.GetAxisRaw ("Horizontal")),
+				(Input.GetAxisRaw ("Vertical"))).normalized; /*Set direction to the normalized input vector.*/
+
+			Direction dir = Vector2ToDirection (new Vector2(Mathf.Round(movement.movementDirection.x), Mathf.Round(movement.movementDirection.y)));
+			if (dir != Direction.NONE) {
+				movement.facing = dir;
+			}
+
+			movement.displacement = 
+				Vector3.Lerp(
+					movement.displacement, 
+					movement.movementDirection * movement.speed, 
+					movement.smoothSpeed); /*Set displacement accordingly. LERP for smoothing.*/
+
+
+
+
+				movement.body.velocity = movement.displacement; /*Apply the displacement to the rigidbody.*/
+		} else {
+
+			movement.body.velocity = Vector2.Lerp (movement.body.velocity, Vector2.zero, .1f);
+
 		}
-
-		movement.displacement = 
-			Vector3.Lerp(
-				movement.displacement, 
-				movement.movementDirection * movement.speed, 
-				movement.smoothSpeed); /*Set displacement accordingly. LERP for smoothing.*/
-
-		movement.body.velocity = movement.displacement; /*Apply the displacement to the rigidbody.*/
-
 		movement.isMoving = (movement.body.velocity.sqrMagnitude > 0.2);
 
+	}
+
+	void OnTriggerStay2D(Collider2D other) {
+
+		//Debug.Log ("Found enemy!");
+
+		if (combat.slashing) {
+
+			Debug.Log ("Slashing!");
+
+			Enemy enemy = other.GetComponent<Enemy> ();
+
+			if (enemy != null) {
+
+				Debug.Log ("Enemy Damaged!");
+
+				enemy.Damage(combat.slashDamage);
+
+			}
+
+		}
+	}
+
+	public void GetInput() {
+		combat.slash = (Input.GetKeyDown(KeyCode.Z)? true : combat.slash);
+	}
+
+	public void Update() {
+		GetInput ();
 	}
 
 	/*

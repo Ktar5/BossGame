@@ -9,7 +9,6 @@ public class Boss2SegmentBehaviour : MonoBehaviour {
 	public Transform butt;
 	public Transform tail;
 	public const int count = 12;
-	private float middle = count / 2.0f;
 	private float sin = 0;
 	private GameObject[] segments;
 

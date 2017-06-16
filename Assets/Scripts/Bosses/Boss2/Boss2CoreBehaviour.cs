@@ -70,12 +70,10 @@ public class Boss2CoreBehaviour : MonoBehaviour {
 		if (sin >= Mathf.PI * 2f) {
 			sin = 0.0f;
 		} else {
-			sin += .3f;
+			sin += .1f;
 		}
 
 		float v = mRigidbody2D.velocity.sqrMagnitude;
-
-		Debug.Log (mRigidbody2D.velocity + " || " + v); 
 
 		leg1.localPosition = (leg1start + v * new Vector3(0, (Mathf.Sin (sin) * .15f),0));
 		leg2.localPosition = (leg2start + v * new Vector3(0, (Mathf.Sin (sin) * -.15f),0));

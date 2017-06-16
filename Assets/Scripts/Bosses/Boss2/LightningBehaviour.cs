@@ -49,7 +49,7 @@ public class LightningBehaviour : MonoBehaviour {
 
 		if (timeToNextStrike <= 0) {
 			StartCoroutine (Strike ());
-			timeToNextStrike = Random.Range (3, 20);
+			timeToNextStrike = Random.Range (2, 15);
 		}
 
 	}
