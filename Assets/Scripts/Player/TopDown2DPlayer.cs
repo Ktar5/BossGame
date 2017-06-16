@@ -133,12 +133,20 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	public void Animate() {
 
+
+
+		Debug.Log (!movement.anim.GetCurrentAnimatorStateInfo (0).IsName ("Slash"));
+
+		if (!movement.anim.GetCurrentAnimatorStateInfo (0).IsName ("Slash")) {
+			movement.immobilized = false;
+		}
+
 		if (combat.slash) {
+			movement.facing = Vector2ToDirection (combat.mousePos);
+			movement.immobilized = true;
 			movement.anim.SetTrigger ("attack");
 			combat.slash = false;
 		}
-
-
 
 		movement.anim.SetBool ("isMoving", movement.isMoving);
 
@@ -218,7 +226,7 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 	public void EndSlash() {
 		combat.slashing = false;
-		movement.immobilized = false;
+		//movement.immobilized = false;
 	}
 
 	public void IO() {
@@ -229,7 +237,6 @@ public class TopDown2DPlayer : MonoBehaviour {
 		combat.mousePos = (Mathf.Abs (combat.mousePos.x) > Mathf.Abs (combat.mousePos.y)) ?
 			new Vector2 (Mathf.Round(combat.mousePos.x), 0) :
 			new Vector2 (0, Mathf.Round(combat.mousePos.y));
-		Debug.Log (combat.mousePos);
 
 	}
 
