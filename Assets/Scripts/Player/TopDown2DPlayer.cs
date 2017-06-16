@@ -50,8 +50,13 @@ public class TopDown2DPlayer : MonoBehaviour {
 	[System.Serializable]
 	public class Combat {
 
+		public bool useMouse;
 		public int slashDamage;
+		[HideInInspector]
+		public Camera cam;
 
+		[HideInInspector]
+		public Vector2 mousePos;
 		[HideInInspector]
 		public bool slash;
 		[HideInInspector]
@@ -77,6 +82,7 @@ public class TopDown2DPlayer : MonoBehaviour {
 	Initialize some values for the Rigidbody object.
 	*/
 	void InitComponents() {
+		combat.cam = Camera.main;
 		combat.swordCol = GetComponent<CircleCollider2D> ();
 		combat.swordCol.isTrigger = true;
 		movement.col = GetComponent<BoxCollider2D> ();
@@ -153,8 +159,6 @@ public class TopDown2DPlayer : MonoBehaviour {
 
 		combat.swordCol.offset = DirectionToVector2 (movement.facing) * .5f;
 
-		Debug.Log (movement.immobilized);
-
 		if (!movement.immobilized) {
 
 			movement.movementDirection = new Vector2 (
@@ -209,6 +213,7 @@ public class TopDown2DPlayer : MonoBehaviour {
 	public void StartSlash() {
 		combat.slashing = true;
 		movement.immobilized = true;
+		movement.facing = Vector2ToDirection (combat.mousePos);
 	}
 
 	public void EndSlash() {
@@ -217,7 +222,14 @@ public class TopDown2DPlayer : MonoBehaviour {
 	}
 
 	public void IO() {
-		combat.slash = (Input.GetButtonDown("Action1")? true : combat.slash);
+		combat.slash = (Input.GetButtonDown("Fire1")? true : combat.slash);
+
+		combat.mousePos = (Input.mousePosition) - combat.cam.WorldToScreenPoint (transform.position);
+		combat.mousePos.Normalize ();
+		combat.mousePos = (Mathf.Abs (combat.mousePos.x) > Mathf.Abs (combat.mousePos.y)) ?
+			new Vector2 (Mathf.Round(combat.mousePos.x), 0) :
+			new Vector2 (0, Mathf.Round(combat.mousePos.y));
+		Debug.Log (combat.mousePos);
 
 	}
 
